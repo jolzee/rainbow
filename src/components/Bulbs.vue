@@ -108,7 +108,6 @@ export default {
   },
   data() {
     return {
-      showAudioInput: false,
       audioButtonClasses: "white--text",
       audioButtonColor: "success"
     };
@@ -123,11 +122,8 @@ export default {
     userInput: {
       get: function() {
         if (this.$store.state.userInputReadyForSending) {
-          // this.$store.state.userInputReadyForSending = false;
           this.$store.commit("userInputNotReadyForSending");
           this.sendUserInput();
-          // this.audioButtonColor = "success";
-          console.log("in get of userinput");
         }
         return this.$store.getters.getUserInput;
       },
@@ -181,16 +177,6 @@ export default {
 </script>
 
 <style scoped>
-.rainbow-gradient {
-  background: linear-gradient(
-      217deg,
-      rgba(255, 0, 0, 0.8),
-      rgba(255, 0, 0, 0) 70.71%
-    ),
-    linear-gradient(127deg, rgba(0, 255, 0, 0.8), rgba(0, 255, 0, 0) 70.71%),
-    linear-gradient(336deg, rgba(0, 0, 255, 0.8), rgba(0, 0, 255, 0) 70.71%);
-}
-
 .rainbow-bulb {
   height: 100%;
   width: 100%;
