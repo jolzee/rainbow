@@ -46,7 +46,6 @@
           row
           wrap
         >
-
           <v-flex
             v-for="(bulb, i) in bulbs"
             :key="i"
@@ -62,6 +61,7 @@
                   <v-img
                     :src="require('../assets/bulb.png')"
                     contain
+                    style="margin:3px"
                     :class="{ 'rainbow-bulb' : (bulb.active && bulb.color === 'rainbow') }"
                     :style="{ 'background': getBulbColor(bulb) }"
                   ></v-img>
