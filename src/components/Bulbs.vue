@@ -10,7 +10,18 @@
     >
       <v-toolbar-title>Control these bulbs using your voice
       </v-toolbar-title>
+
       <v-spacer></v-spacer>
+      <v-btn
+        small
+        color="primary"
+        dark
+        v-on:click="newSession"
+      >New Session<v-icon
+          right
+          dark
+        >refresh</v-icon>
+      </v-btn>
       <v-btn
         flat
         v-shortkey="{recordAudioOne: ['ctrl', 'alt', '.'], recordAudioTwo: ['ctrl', 'alt', '`'], recordAudioThree: ['ctrl', 'alt', 'arrowup']}"
@@ -39,51 +50,53 @@
           <v-flex
             v-for="(bulb, i) in bulbs"
             :key="i"
-            xs2
+            xs2.5
           >
             <v-card
-              :color="bulb.active ? bulb.color : ''"
+              elevation="0"
+              color="white"
               class="black--text"
             >
               <v-layout row>
-                <v-flex xs7>
-                  <v-card-title primary-title>
-                    <div>
-                      <div class="headline">{{ i + 1 }}</div>
-                      <div>{{ bulb.active ? 'On' : 'Off'}}</div>
-                      <div>{{ bulb.color }}</div>
-                    </div>
-                  </v-card-title>
-                </v-flex>
-                <v-flex xs5>
+                <v-flex xs12>
                   <v-img
                     :src="require('../assets/bulb.png')"
                     contain
-                    min-height="125"
-                    height="125"
+                    :class="{ 'rainbow-bulb' : (bulb.active && bulb.color === 'rainbow') }"
+                    :style="{ 'background': getBulbColor(bulb) }"
                   ></v-img>
                 </v-flex>
               </v-layout>
             </v-card>
           </v-flex>
-
         </v-layout>
       </v-container>
+      <v-container>
+        <v-layout
+          align-start
+          justify-start
+          row
+        >
+          <v-flex xs9>
+            <v-text-field
+              clearable
+              v-model="userInput"
+              @keyup.enter.native="sendUserInput"
+              label="Control the Lights. Ask me questions."
+            ></v-text-field>
+          </v-flex>
+          <v-flex>
+            <v-btn @click="sendUserInput">Send</v-btn>
+          </v-flex>
+        </v-layout>
+      </v-container>
+
     </v-card>
-    <!-- <teneo-listening
-      v-bind:value="listening"
-      message="Listening"
-    ></teneo-listening> -->
     <Listening
       v-bind:value="listening"
       message="Listening"
     ></Listening>
 
-    <v-text-field
-      v-model="userInput"
-      label="Control the Lights. Ask me questions."
-    ></v-text-field>
-    <v-btn @click="sendUserInput">Send</v-btn>
   </div>
 </template>
 
@@ -110,9 +123,10 @@ export default {
     userInput: {
       get: function() {
         if (this.$store.state.userInputReadyForSending) {
-          this.$store.state.userInputReadyForSending = false;
+          // this.$store.state.userInputReadyForSending = false;
+          this.$store.commit("userInputNotReadyForSending");
           this.sendUserInput();
-          this.audioButtonColor = "success";
+          // this.audioButtonColor = "success";
           console.log("in get of userinput");
         }
         return this.$store.getters.getUserInput;
@@ -123,6 +137,20 @@ export default {
     }
   },
   methods: {
+    newSession() {
+      this.$store.dispatch("endSession");
+    },
+    getBulbColor(bulb) {
+      let finalColor = "";
+      if (bulb.active && bulb.color !== "" && bulb.color !== "rainbow") {
+        finalColor = bulb.color;
+      } else if (bulb.active && bulb.color === "") {
+        finalColor = "yellow";
+      } else {
+        finalColor = "";
+      }
+      return finalColor;
+    },
     stopAudioCapture() {
       this.$store.commit("hideListening");
       this.$store.dispatch("stopAudioCapture");
@@ -153,4 +181,86 @@ export default {
 </script>
 
 <style scoped>
+.rainbow-gradient {
+  background: linear-gradient(
+      217deg,
+      rgba(255, 0, 0, 0.8),
+      rgba(255, 0, 0, 0) 70.71%
+    ),
+    linear-gradient(127deg, rgba(0, 255, 0, 0.8), rgba(0, 255, 0, 0) 70.71%),
+    linear-gradient(336deg, rgba(0, 0, 255, 0.8), rgba(0, 0, 255, 0) 70.71%);
+}
+
+.rainbow-bulb {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: relative;
+  background: linear-gradient(
+    124deg,
+    #ff2400,
+    #e81d1d,
+    #e8b71d,
+    #e3e81d,
+    #1de840,
+    #1ddde8,
+    #2b1de8,
+    #dd00f3,
+    #dd00f3
+  );
+  background-size: 1000% 100%;
+
+  -webkit-animation: rainbow 2s ease infinite;
+  -z-animation: rainbow 2s ease infinite;
+  -o-animation: rainbow 2s ease infinite;
+  animation: rainbow 2s ease infinite;
+}
+
+@-webkit-keyframes rainbow {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
+}
+@-moz-keyframes rainbow {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
+}
+@-o-keyframes rainbow {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
+}
+@keyframes rainbow {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
+}
 </style>

@@ -1,6 +1,30 @@
 export const ASR_CORRECTIONS = [
-  ["replacethat", "with this"],
-  ["apparantly", "apparently"]
+  ["loft", "last"],
+  ["lot", "light"],
+  ["fish", "first"]
+];
+
+export const BULBS_BASE = [
+  {
+    color: "",
+    active: false
+  },
+  {
+    color: "",
+    active: false
+  },
+  {
+    color: "false",
+    active: false
+  },
+  {
+    color: "",
+    active: false
+  },
+  {
+    color: "",
+    active: false
+  }
 ];
 
 export const COLOR_NAMES = [

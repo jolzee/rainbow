@@ -6,7 +6,7 @@ import URL from "url-parse";
 import replaceString from "replace-string";
 import stripHtml from "string-strip-html";
 
-import { ASR_CORRECTIONS } from "./constants/constants";
+import { ASR_CORRECTIONS, BULBS_BASE } from "./constants/constants";
 
 Vue.use(VueJsonp, 10000);
 Vue.use(Vuex);
@@ -47,28 +47,7 @@ store = new Vuex.Store({
     speakBackResponses: true,
     userInputReadyForSending: false,
     userInput: "",
-    bulbs: [
-      {
-        color: "",
-        active: false
-      },
-      {
-        color: "",
-        active: false
-      },
-      {
-        color: "",
-        active: false
-      },
-      {
-        color: "",
-        active: false
-      },
-      {
-        color: "",
-        active: false
-      }
-    ],
+    bulbs: BULBS_BASE,
     teneoUrl: TENEO_URL,
     stopAudioCapture: false
   },
@@ -86,6 +65,9 @@ store = new Vuex.Store({
     },
     hideListening(state) {
       state.listening = false;
+    },
+    userInputNotReadyForSending(state) {
+      state.userInputReadyForSending = false;
     },
     setUserInput(state, userInput) {
       if (userInput) {
@@ -119,15 +101,21 @@ store = new Vuex.Store({
           fullUrl.pathname +
           "endsession";
 
+        store.state.bulbs = BULBS_BASE;
+        store.state.resetSession = true;
+        store.state.userInput = "";
+        if (artyom && artyom.isSpeaking()) {
+          // console.log("Artyom is speaking something. Let's shut it up");
+          artyom.shutUp();
+        }
+
         Vue.jsonp(endSessionUrl, {})
           .then(() => {
             console.log("Session Ended");
-            store.state.resetSession = true;
             resolve();
           })
           .catch(() => {
             console.log("Session Ended");
-            store.state.resetSession = true;
             resolve();
           });
       });
