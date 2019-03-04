@@ -1,8 +1,4 @@
-export const ASR_CORRECTIONS = [
-  ["loft", "last"],
-  ["lot", "light"],
-  ["fish", "first"]
-];
+export const ASR_CORRECTIONS = [["loft", "last"], ["lot", "light"], ["fish", "first"]];
 
 export const BULBS_BASE = [
   {
@@ -14,7 +10,7 @@ export const BULBS_BASE = [
     active: false
   },
   {
-    color: "false",
+    color: "",
     active: false
   },
   {
