@@ -49,7 +49,7 @@
           <v-flex
             v-for="(bulb, i) in bulbs"
             :key="i"
-            xs2.5
+            xs2.4
           >
             <v-card
               elevation="0"
@@ -61,7 +61,7 @@
                   <v-img
                     :src="require('../assets/bulb.png')"
                     contain
-                    style="margin:3px"
+                    style=""
                     :class="{ 'rainbow-bulb' : (bulb.active && bulb.color === 'rainbow') }"
                     :style="{ 'background': getBulbColor(bulb) }"
                   ></v-img>
@@ -176,7 +176,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+.v-responsive__content {
+  border: 1px solid white;
+}
 .rainbow-bulb {
   height: 100%;
   width: 100%;
@@ -240,13 +243,13 @@ export default {
 }
 @keyframes rainbow {
   0% {
-    background-position: 0% 82%;
+    background-position: 1% 82%;
   }
   50% {
-    background-position: 100% 19%;
+    background-position: 99% 19%;
   }
   100% {
-    background-position: 0% 82%;
+    background-position: 1% 82%;
   }
 }
 </style>
