@@ -59,7 +59,7 @@
               <v-layout row>
                 <v-flex xs12>
                   <v-img
-                    :src="require('../assets/bulb.png')"
+                    :src="getImage(bulb)"
                     contain
                     style=""
                     :class="{ 'rainbow-bulb' : (bulb.active && bulb.color === 'rainbow') }"
@@ -97,11 +97,18 @@
       message="Listening"
     ></Listening>
 
+    <div style="display: none;">
+      <v-img :src="require('../assets/bulb.png')"></v-img>
+      <v-img :src="require('../assets/bulb-on.png')"></v-img>
+    </div>
   </div>
 </template>
 
 <script>
 import Listening from "./Listening";
+const onBulb = require("../assets/bulb-on.png");
+const offBulb = require("../assets/bulb.png");
+
 export default {
   components: {
     Listening
@@ -133,6 +140,9 @@ export default {
     }
   },
   methods: {
+    getImage(bulb) {
+      return bulb.active ? onBulb : offBulb;
+    },
     newSession() {
       this.$store.dispatch("endSession");
     },
