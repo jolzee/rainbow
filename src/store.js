@@ -5,6 +5,7 @@ import Artyom from "artyom.js";
 import URL from "url-parse";
 import replaceString from "replace-string";
 import stripHtml from "string-strip-html";
+import TIE from "@artificialsolutions/tie-api-client";
 
 import { ASR_CORRECTIONS, BULBS_BASE } from "./constants/constants";
 
@@ -15,22 +16,13 @@ let store;
 
 let timeoutVar;
 let TENEO_URL =
-  "https://teneo5feature-demos.presales.artificial-solutions.com/projectrainbow/" +
-  "?viewname=STANDARDJSONP";
+  "https://teneo5feature-demos.presales.artificial-solutions.com/projectrainbow/" + "?viewname=STANDARDJSONP";
 let REQUEST_PARAMETERS = "";
 let artyom = null;
 
-if (
-  window.hasOwnProperty("webkitSpeechRecognition") &&
-  window.hasOwnProperty("speechSynthesis")
-) {
+if (window.hasOwnProperty("webkitSpeechRecognition") && window.hasOwnProperty("speechSynthesis")) {
   artyom = new Artyom();
-  artyom.ArtyomVoicesIdentifiers["en-GB"] = [
-    "Google UK English Female",
-    "Google UK English Male",
-    "en-GB",
-    "en_GB"
-  ];
+  artyom.ArtyomVoicesIdentifiers["en-GB"] = ["Google UK English Female", "Google UK English Male", "en-GB", "en_GB"];
   artyom.initialize({
     soundex: true,
     continuous: false,
@@ -95,11 +87,7 @@ store = new Vuex.Store({
       return new Promise(resolve => {
         let fullUrl = new URL(store.state.teneoUrl);
         let endSessionUrl =
-          fullUrl.protocol +
-          "//" +
-          fullUrl.host +
-          fullUrl.pathname +
-          "endsession";
+          fullUrl.protocol + "//" + fullUrl.host + fullUrl.pathname + "endsession?viewtype=STANDARDJSONP";
 
         store.state.bulbs = BULBS_BASE;
         store.state.resetSession = true;
@@ -131,18 +119,12 @@ store = new Vuex.Store({
             store.commit("hideChatLoading"); // about to show the greeting - hide the chat loading spinner
             // console.log(decodeURIComponent(json.responseData.answer))
             let hasExtraData = false;
-            if (
-              json.responseData.extraData.extensions ||
-              json.responseData.extraData.liveChat
-            ) {
+            if (json.responseData.extraData.extensions || json.responseData.extraData.liveChat) {
               hasExtraData = true;
             }
             const response = {
               type: "reply",
-              text: decodeURIComponent(json.responseData.answer).replace(
-                /onclick="[^"]+"/g,
-                'class="sendInput"'
-              ),
+              text: decodeURIComponent(json.responseData.answer).replace(/onclick="[^"]+"/g, 'class="sendInput"'),
               bodyText: "",
               teneoResponse: json.responseData,
               hasExtraData: hasExtraData
@@ -168,16 +150,19 @@ store = new Vuex.Store({
         // console.log("Artyom is speaking something. Let's shut it up");
         artyom.shutUp();
       }
+
+      // TIE.sendInput(store.state.teneoUrl, null, { text: store.state.userInput }).then(response => {
+      //   console.log(response.output);
+      //   return response;
+      // });
+
       Vue.jsonp(store.state.teneoUrl + REQUEST_PARAMETERS, {
         userinput: store.state.userInput
       })
         .then(json => {
           const response = {
             userInput: store.state.userInput,
-            teneoAnswer: decodeURIComponent(json.responseData.answer).replace(
-              /onclick="[^"]+"/g,
-              'class="sendInput"'
-            ),
+            teneoAnswer: decodeURIComponent(json.responseData.answer).replace(/onclick="[^"]+"/g, 'class="sendInput"'),
             teneoResponse: json.responseData
           };
 
@@ -186,14 +171,10 @@ store = new Vuex.Store({
           let ttsText = stripHtml(response.teneoAnswer);
           // ttsText = "Yes Sir - Text to Speech Is Working";
           if (response.teneoResponse.extraData.tts) {
-            ttsText = stripHtml(
-              decodeURIComponent(response.teneoResponse.extraData.tts)
-            );
+            ttsText = stripHtml(decodeURIComponent(response.teneoResponse.extraData.tts));
           }
 
-          let bulbsJson = decodeURIComponent(
-            response.teneoResponse.extraData.bulbs
-          );
+          let bulbsJson = decodeURIComponent(response.teneoResponse.extraData.bulbs);
 
           if (bulbsJson) {
             console.log(bulbsJson);
@@ -203,10 +184,7 @@ store = new Vuex.Store({
           }
 
           // check if this browser supports the Web Speech API
-          if (
-            window.hasOwnProperty("webkitSpeechRecognition") &&
-            window.hasOwnProperty("speechSynthesis")
-          ) {
+          if (window.hasOwnProperty("webkitSpeechRecognition") && window.hasOwnProperty("speechSynthesis")) {
             if (artyom && store.state.speakBackResponses) {
               artyom.say(ttsText);
             }
@@ -215,12 +193,8 @@ store = new Vuex.Store({
           // context.commit("updateChatWindowAndStorage", response);
 
           // added on request from Mark J - switch languages based on NER language detection
-          let langInput = decodeURIComponent(
-            response.teneoResponse.extraData.langinput
-          );
-          let langEngineUrl = decodeURIComponent(
-            response.teneoResponse.extraData.langengineurl
-          );
+          let langInput = decodeURIComponent(response.teneoResponse.extraData.langinput);
+          let langEngineUrl = decodeURIComponent(response.teneoResponse.extraData.langengineurl);
 
           if (langEngineUrl !== "undefined" && langInput !== "undefined") {
             store.state.teneoUrl = langEngineUrl + "?viewname=STANDARDJSONP";
@@ -229,16 +203,9 @@ store = new Vuex.Store({
             store.commit("showProgressBar");
             store
               .dispatch("sendUserInput")
-              .then(
-                console.log(
-                  "Sent original lang input to new lang specific solution"
-                )
-              )
+              .then(console.log("Sent original lang input to new lang specific solution"))
               .catch(err => {
-                console.err(
-                  "Unable to send lang input to new lang specific solution",
-                  err.message
-                );
+                console.err("Unable to send lang input to new lang specific solution", err.message);
               });
           }
         })
@@ -307,10 +274,7 @@ if (artyom != null) {
               replacement[1].toLowerCase()
             );
           } else {
-            let search = replacement[0].replace(
-              /[-[\]{}()*+?.,\\^$|#\s]/g,
-              "\\$&"
-            ); // escase any special characters
+            let search = replacement[0].replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"); // escase any special characters
             var re = new RegExp("\\b" + search + "\\b", "gi");
             // fixedUserInput = fixedUserInput.toLowerCase().replace(re, replacement[1].toLowerCase());
             fixedUserInput = fixedUserInput.replace(re, replacement[1]);
@@ -319,18 +283,11 @@ if (artyom != null) {
           // console.log(`Starting: ${startingText} | Ending: ${fixedUserInput}`);
 
           if (startingText.toLowerCase() !== fixedUserInput.toLowerCase()) {
-            console.log(
-              "Made a change to ASR response: " +
-                replacement[0] +
-                " >> " +
-                replacement[1]
-            );
+            console.log("Made a change to ASR response: " + replacement[0] + " >> " + replacement[1]);
           }
         });
 
-        if (
-          store.state.userInput.toLowerCase() !== fixedUserInput.toLowerCase()
-        ) {
+        if (store.state.userInput.toLowerCase() !== fixedUserInput.toLowerCase()) {
           store.state.userInput = fixedUserInput;
           console.log(`Final Transcription: ${fixedUserInput}`);
         }
