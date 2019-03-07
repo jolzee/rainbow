@@ -3,12 +3,7 @@
     <v-toolbar app>
       <v-toolbar-title class="headline text-uppercase">
         <span>Project | </span>
-        <span class="font-weight-light">RAINBOW </span>
-        <v-img
-          width="32"
-          :src="require('./assets/rainbow.png')"
-          style="float: right; margin-left: 20px;"
-        ></v-img>
+        <span class="rainbow-text">RAINBOW</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
@@ -41,3 +36,23 @@ export default {
   }
 };
 </script>
+
+<style>
+.rainbow-text {
+  background-image: linear-gradient(
+    to left,
+    violet,
+    indigo,
+    blue,
+    green,
+    orange,
+    red
+  );
+  -webkit-background-clip: text;
+  color: transparent;
+}
+</style>
+
+
+
+

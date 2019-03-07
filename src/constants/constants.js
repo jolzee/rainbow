@@ -1,4 +1,16 @@
-export const ASR_CORRECTIONS = [["loft", "last"], ["lot", "light"], ["fish", "first"]];
+export const ASR_CORRECTIONS = [
+  ["loft", "last"],
+  ["lot", "light"],
+  ["lots", "lights"],
+  ["fish", "first"],
+  ["porch", "forth"],
+  ["salat", "light"],
+  ["v", "fifth"],
+  ["game", "again"],
+  ["not", "now"],
+  ["flood", "forth"],
+  ["shuffle", "go full"]
+];
 
 export const BULBS_BASE = [
   {

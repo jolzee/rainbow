@@ -98,6 +98,7 @@
     ></Listening>
 
     <div style="display: none;">
+      <!-- pre-load -->
       <v-img :src="require('../assets/bulb.png')"></v-img>
       <v-img :src="require('../assets/bulb-on.png')"></v-img>
     </div>
